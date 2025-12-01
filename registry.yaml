@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/aquaproj/aqua/main/json-schema/registry.json
+packages:
+  - type: github_release
+    repo_owner: rodrigodotdev
+    repo_name: php
+    description: Static PHP CLI binaries for Linux, macOS, and Windows
+    files:
+      - name: php
+    version_constraint: "false"
+    version_overrides:
+      - version_constraint: "true"
+        asset: php-{{trimV .Version}}-{{.OS}}-{{.Arch}}.{{.Format}}
+        format: tar.gz
+        files:
+          - name: php
+        replacements:
+          amd64: x86_64
+          arm64: aarch64
+          darwin: macos
+        checksum:
+          type: github_release
+          asset: SHASUMS256.txt
+          algorithm: sha256
+          file_format: regexp
+          pattern:
+            checksum: "^([0-9a-fA-F]+)"
+            file: ' {{.Asset}}$'
+        overrides:
+          - goos: windows
+            format: zip
+            replacements:
+              amd64: ""
+              arm64: ""
+              windows: win
+            asset: php-{{trimV .Version}}-win.{{.Format}}
+        supported_envs:
+          - linux/amd64
+          - linux/arm64
+          - darwin/amd64
+          - darwin/arm64
+          - windows/amd64
